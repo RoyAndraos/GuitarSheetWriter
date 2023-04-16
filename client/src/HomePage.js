@@ -6,20 +6,14 @@ import AudioContext from "./converters_and_helpers/AudioContext";
 import {
   updatePitch,
   calculateMeasureTime,
-  decodeNoteArray,
 } from "./converters_and_helpers/helpers";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
+let myInterval;
 const HomePage = () => {
   const [source, setSource] = useState(null);
   const [started, setStart] = useState(false);
-  const [pitchNote, setPitchNote] = useState("rest");
-  const [pitchScale, setPitchScale] = useState(0);
-  const [pitch, setPitch] = useState("0 Hz");
   const [notification, setNotification] = useState(false);
-  const [intervalId, setIntervalId] = useState(null);
-  const [measureArrayLength, setMesureArrayLength] = useState();
-  const [encodedNoteArray, setEncodedNoteArray] = useState([]);
   const [track, setTrack] = useState([]);
   const [formData, setFormData] = useState({
     bpm: "60",
@@ -27,66 +21,81 @@ const HomePage = () => {
     topTimeSignature: "4",
     bottomTimeSignature: "4",
   });
-  if (encodedNoteArray.length === measureArrayLength) {
-    const measure = decodeNoteArray(
-      encodedNoteArray,
-      formData.bpm,
-      formData.timeSignature
-    );
-    setTrack((current) => [...current, measure]);
-    setEncodedNoteArray([]);
-  }
+  // const [pitchNote, setPitchNote] = useState("rest");
+  // const [pitchScale, setPitchScale] = useState(0);
+  // const [pitch, setPitch] = useState("0 Hz");
+  // const [measureArrayLength, setMesureArrayLength] = useState();
+
+  //if (encodedNoteArray.length === measureArrayLength) {
+  //  const measure = decodeNoteArray(
+  //    encodedNoteArray,
+  //    formData.bpm,
+  //    formData.timeSignature
+  //  );
+  //
+  //  setTrack((current) => [...current, measure]);
+  //  setEncodedNoteArray([]);
+  //}
   const audioCtx = AudioContext.getAudioContext();
   const analyserNode = AudioContext.getAnalyser();
-  useEffect(() => {
-    if (source != null) {
-      source.connect(analyserNode);
-    }
-  }, [source, analyserNode]);
 
   const start = async () => {
+    const getMicInput = async () => {
+      return navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          autoGainControl: false,
+          noiseSuppression: false,
+          latency: 0,
+        },
+      });
+    };
     const input = await getMicInput();
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
     const measureLength = calculateMeasureTime(
       formData.timeSignature,
       formData.bpm
     );
-    setMesureArrayLength(measureLength);
-    if (audioCtx.state === "suspended") {
-      await audioCtx.resume();
-    }
+
     setStart(true);
     setNotification(true);
     setTimeout(() => setNotification(false), 5000);
-    setSource(audioCtx.createMediaStreamSource(input));
-    const id = setInterval(() => {
-      updatePitch(audioCtx, analyserNode, setEncodedNoteArray);
+    const src = audioCtx.createMediaStreamSource(input);
+    src.connect(analyserNode);
+    setSource(src);
+    myInterval = setInterval(() => {
+      console.log(
+        updatePitch(
+          audioCtx,
+          analyserNode,
+          formData.bpm,
+          formData.timeSignature
+        )
+      );
+      updatePitch(
+        audioCtx,
+        analyserNode,
+        formData.bpm,
+        formData.timeSignature,
+        measureLength
+      );
     }, 20);
-    setIntervalId(id);
   };
 
   const stop = () => {
     source.disconnect(analyserNode);
     setStart(false);
-    clearInterval(intervalId);
-    setIntervalId(null);
+    clearInterval(myInterval);
   };
 
-  const getMicInput = () => {
-    return navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        autoGainControl: false,
-        noiseSuppression: false,
-        latency: 0,
-      },
-    });
-  };
   return (
     <Wrapper>
       <LeftTab
-        pitchNote={pitchNote}
-        pitchScale={pitchScale}
-        pitch={pitch}
+        // pitchNote={pitchNote}
+        // pitchScale={pitchScale}
+        // pitch={pitch}
         formData={formData}
         setFormData={setFormData}
       />

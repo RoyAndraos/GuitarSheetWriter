@@ -7,14 +7,11 @@ const MusicSheet = ({ notification, track }) => {
     <Wrapper>
       <SheetHeader />
       {notification && (
-        <Notification>bring your guitar close to the mic</Notification>
+        <Notification>bring your mic close to the guitar</Notification>
       )}
       <TabsWrapper>
         {track &&
           track.map((measure, index) => {
-            if (index === track.length - 1) {
-              return <Measure key={index} measure={measure} id="last" />;
-            }
             return <Measure key={index} measure={measure} />;
           })}
       </TabsWrapper>

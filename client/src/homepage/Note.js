@@ -1,7 +1,6 @@
-import React from "react";
-
-const Note = () => {
-  return <div></div>;
+const Note = ({ note }) => {
+  console.log(note);
+  return <div>{note.note === "rest" ? "rest" : note.fret}</div>;
 };
 
 export default Note;

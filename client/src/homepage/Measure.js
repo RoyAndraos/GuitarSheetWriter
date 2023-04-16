@@ -2,12 +2,14 @@ import styled from "styled-components";
 import Note from "./Note";
 const Measure = ({ measure }) => {
   return (
-    <div>
+    <TabContainer>
       {measure.map((element, index) => {
-        return <Note key={index} />;
+        return <Note key={index} note={element.note} />;
       })}
-    </div>
+    </TabContainer>
   );
 };
+
+const TabContainer = styled.div``;
 
 export default Measure;
