@@ -49,35 +49,21 @@ const peakAmplitude = (buf) => {
   }
   return Math.round(peak * 1000);
 };
-
-//---------------------------------------------------------------------------------
 let encodedNoteArray = [];
-const updatePitch = async (
-  audioCtx,
-  analyserNode,
-  bpm,
-  timeSignature,
-  measureLength
-) => {
+const updatePitch = (audioCtx, analyserNode, setTrack, bpm, timeSignature) => {
+  const measureArrayLength = calculateMeasureTime(timeSignature, bpm);
+  if (encodedNoteArray.length === measureArrayLength) {
+    console.log("hello");
+    const measure = decodeNoteArray(encodedNoteArray, bpm, timeSignature);
+    setTrack((curr) => [...curr, measure]);
+    encodedNoteArray = [];
+  }
+
   const buf = new Float32Array(2048);
   analyserNode.getFloatTimeDomainData(buf);
   let noteInfo;
   const noiseCanceledFrequency = autoCorrelate(buf, audioCtx.sampleRate);
   const amp = peakAmplitude(buf);
-  console.log({
-    mesurelength: measureLength,
-    encodedNoteArray: encodedNoteArray.length,
-  });
-  if (measureLength === encodedNoteArray.length) {
-    const decodedNoteArray = decodeNoteArray(
-      encodedNoteArray,
-      bpm,
-      timeSignature
-    );
-    encodedNoteArray = [];
-    console.log(decodedNoteArray);
-    return decodedNoteArray;
-  }
   if (noiseCanceledFrequency === -1) {
     const frequency = ncAutoCorrelate(buf, audioCtx.sampleRate);
     if (frequency >= 40 && frequency <= 500) {
@@ -86,13 +72,14 @@ const updatePitch = async (
       const scale = Math.floor(note / 12) - 1;
       const dtune = centsOffFromPitch(frequency, note);
       noteInfo = { note, symbol, scale, dtune, amp };
+
       encodedNoteArray.push(noteInfo);
-      return;
+      return noteInfo;
     }
     if (frequency === Infinity || frequency < 40 || frequency > 500) {
       noteInfo = { note: "rest" };
       encodedNoteArray.push(noteInfo);
-      return;
+      return noteInfo;
     }
   }
   if (noiseCanceledFrequency > -1) {
@@ -102,10 +89,9 @@ const updatePitch = async (
     const dtune = centsOffFromPitch(noiseCanceledFrequency, note);
     noteInfo = { note, symbol, scale, dtune, amp };
     encodedNoteArray.push(noteInfo);
-    return;
+    return noteInfo;
   }
 };
-//---------------------------------------------------------------------------------
 
 const calculateMeasureTime = (timeSignature, bpm) => {
   const timeSignatureArray = [
@@ -141,11 +127,11 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
   const eighthDotted = eighth * 1.5;
   const sixteenthDotted = sixteenth * 1.5;
   // triplet notes
-
-  const halfTriplet = (half * 2) / 3;
-  const quarterTriplet = (quarter * 2) / 3;
-  const eighthTriplet = (eighth * 2) / 3;
-  const sixteenthTriplet = (sixteenth * 2) / 3;
+  //
+  //const halfTriplet = (half * 2) / 3;
+  //const quarterTriplet = (quarter * 2) / 3;
+  //const eighthTriplet = (eighth * 2) / 3;
+  //const sixteenthTriplet = (sixteenth * 2) / 3;
 
   // duration of each in array values
   const arrayValueDuration = 20; // duration of each array value in ms
@@ -170,18 +156,18 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
   );
 
   // triplets
-  const numArrayValuesPerTripletSixteenthNote = Math.round(
-    sixteenthTriplet / arrayValueDuration
-  );
-  const numArrayValuesPerTripletEighthNote = Math.round(
-    eighthTriplet / arrayValueDuration
-  );
-  const numArrayValuesPerTripletQuarterNote = Math.round(
-    quarterTriplet / arrayValueDuration
-  );
-  const numArrayValuesPerTripletHalfNote = Math.round(
-    halfTriplet / arrayValueDuration
-  );
+  //const numArrayValuesPerTripletSixteenthNote = Math.round(
+  //  sixteenthTriplet / arrayValueDuration
+  //);
+  //const numArrayValuesPerTripletEighthNote = Math.round(
+  //  eighthTriplet / arrayValueDuration
+  //);
+  //const numArrayValuesPerTripletQuarterNote = Math.round(
+  //  quarterTriplet / arrayValueDuration
+  //);
+  //const numArrayValuesPerTripletHalfNote = Math.round(
+  //  halfTriplet / arrayValueDuration
+  //);
 
   //----------------------------------------------------------------------------------------------
 
@@ -192,25 +178,25 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
     { name: "d2", duration: numArrayValuesPerDottedHalfNote },
     { name: "2", duration: numArrayValuesPerHalfNote },
 
-    { name: "2t", duration: numArrayValuesPerTripletHalfNote },
+    //{ name: "2t", duration: numArrayValuesPerTripletHalfNote },
     { name: "d4", duration: numArrayValuesPerDottedQuarterNote },
     { name: "4", duration: numArrayValuesPerQuarterNote },
 
-    { name: "4t", duration: numArrayValuesPerTripletQuarterNote },
+    //{ name: "4t", duration: numArrayValuesPerTripletQuarterNote },
     { name: "d8", duration: numArrayValuesPerDottedEighthNote },
     { name: "8", duration: numArrayValuesPerEighthNote },
 
-    { name: "8t", duration: numArrayValuesPerTripletEighthNote },
+    //{ name: "8t", duration: numArrayValuesPerTripletEighthNote },
     {
       name: "d16",
       duration: numArrayValuesPerDottedSixtheenthNote,
     },
     { name: "16", duration: numArrayValuesPer16thNote },
 
-    {
-      name: "16t",
-      duration: numArrayValuesPerTripletSixteenthNote,
-    },
+    //{
+    //  name: "16t",
+    //  duration: numArrayValuesPerTripletSixteenthNote,
+    //},
   ];
 
   //----------------------------------------------------------------------------------------------
@@ -366,7 +352,11 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
     const tabNote = noteToTabs.find((tab) => {
       return note === tab.name;
     });
-    return { string: tabNote.string, fret: tabNote.fret };
+    if (tabNote === undefined) {
+      return { note: "rest" };
+    } else {
+      return { string: tabNote.string, fret: tabNote.fret };
+    }
   };
   //----------------------------------------------------------------------------------------------
   //build the measure by getting the closest duration of each note (closest to a readable note duration)
@@ -380,6 +370,7 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
       return { ...element, duration: newDuration };
     }
   });
+  console.log(measure);
   //----------------------------------------------------------------------------------------------
   return measure;
 };

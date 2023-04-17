@@ -3,16 +3,16 @@ import RightTab from "./homepage/RightTab";
 import MusicSheet from "./homepage/MusicSheet";
 import styled from "styled-components";
 import AudioContext from "./converters_and_helpers/AudioContext";
-import {
-  updatePitch,
-  calculateMeasureTime,
-} from "./converters_and_helpers/helpers";
-import { useState } from "react";
+import { updatePitch } from "./converters_and_helpers/helpers";
+import { useState, useEffect } from "react";
 
 let myInterval;
 const HomePage = () => {
   const [source, setSource] = useState(null);
   const [started, setStart] = useState(false);
+  const [pitchNote, setPitchNote] = useState("rest");
+  const [pitchScale, setPitchScale] = useState(0);
+  const [pitch, setPitch] = useState("0 Hz");
   const [notification, setNotification] = useState(false);
   const [track, setTrack] = useState([]);
   const [formData, setFormData] = useState({
@@ -21,44 +21,19 @@ const HomePage = () => {
     topTimeSignature: "4",
     bottomTimeSignature: "4",
   });
-  // const [pitchNote, setPitchNote] = useState("rest");
-  // const [pitchScale, setPitchScale] = useState(0);
-  // const [pitch, setPitch] = useState("0 Hz");
-  // const [measureArrayLength, setMesureArrayLength] = useState();
-
-  //if (encodedNoteArray.length === measureArrayLength) {
-  //  const measure = decodeNoteArray(
-  //    encodedNoteArray,
-  //    formData.bpm,
-  //    formData.timeSignature
-  //  );
-  //
-  //  setTrack((current) => [...current, measure]);
-  //  setEncodedNoteArray([]);
-  //}
   const audioCtx = AudioContext.getAudioContext();
   const analyserNode = AudioContext.getAnalyser();
+  useEffect(() => {
+    if (source != null) {
+      source.connect(analyserNode);
+    }
+  }, [source, analyserNode]);
 
   const start = async () => {
-    const getMicInput = async () => {
-      return navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: true,
-          autoGainControl: false,
-          noiseSuppression: false,
-          latency: 0,
-        },
-      });
-    };
     const input = await getMicInput();
     if (audioCtx.state === "suspended") {
       await audioCtx.resume();
     }
-    const measureLength = calculateMeasureTime(
-      formData.timeSignature,
-      formData.bpm
-    );
-
     setStart(true);
     setNotification(true);
     setTimeout(() => setNotification(false), 5000);
@@ -66,20 +41,12 @@ const HomePage = () => {
     src.connect(analyserNode);
     setSource(src);
     myInterval = setInterval(() => {
-      console.log(
-        updatePitch(
-          audioCtx,
-          analyserNode,
-          formData.bpm,
-          formData.timeSignature
-        )
-      );
       updatePitch(
         audioCtx,
         analyserNode,
+        setTrack,
         formData.bpm,
-        formData.timeSignature,
-        measureLength
+        formData.timeSignature
       );
     }, 20);
   };
@@ -90,12 +57,22 @@ const HomePage = () => {
     clearInterval(myInterval);
   };
 
+  const getMicInput = () => {
+    return navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        autoGainControl: false,
+        noiseSuppression: false,
+        latency: 0,
+      },
+    });
+  };
   return (
     <Wrapper>
       <LeftTab
-        // pitchNote={pitchNote}
-        // pitchScale={pitchScale}
-        // pitch={pitch}
+        pitchNote={pitchNote}
+        pitchScale={pitchScale}
+        pitch={pitch}
         formData={formData}
         setFormData={setFormData}
       />
