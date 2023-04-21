@@ -5,7 +5,7 @@ const SheetForm = ({ formData, setFormData }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "topTimeSignature") {
-      const maxVal = "16";
+      const maxVal = "32";
       const minVal = "1";
       if (parseInt(value) > 16) {
         setFormData({
@@ -39,29 +39,41 @@ const SheetForm = ({ formData, setFormData }) => {
   return (
     <StyledForm>
       <InputContainer>
-        <label>Bpm</label>
+        <label>Title : </label>
+        <Input
+          style={{ width: "100px" }}
+          type={"text"}
+          name={"title"}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+        ></Input>
+      </InputContainer>
+
+      <InputContainer>
+        <label>Bpm :</label>
         <Input
           defaultValue={"60"}
           type={"text"}
           name={"bpm"}
           onChange={(e) => setFormData({ ...formData, bpm: e.target.value })}
           onBlur={(e) => {
-            const maxVal = "160";
+            const maxVal = "210";
             const minVal = "40";
             if (parseInt(e.target.value) < 40) {
               setFormData({ ...formData, bpm: minVal });
-            } else if (parseInt(e.target.value) > 160) {
+              e.target.value = minVal;
+            } else if (parseInt(e.target.value) > 210) {
               setFormData({ ...formData, bpm: maxVal });
+              e.target.value = maxVal;
             }
           }}
         ></Input>
       </InputContainer>
 
       <InputContainer>
-        <label>Time Signature</label>
-        <div>
+        <label>Time Signature :</label>
+        <div style={{ color: "white" }}>
           <Input
-            style={{ width: "10px", textAlign: "right" }}
+            style={{ width: "15px", textAlign: "right" }}
             defaultValue={"4"}
             type={"text"}
             name={"topTimeSignature"}
@@ -84,23 +96,26 @@ const SheetForm = ({ formData, setFormData }) => {
 };
 
 const StyledForm = styled.form`
+  font-family: "Lato", sans-serif;
   padding-top: 20px;
   display: flex;
   flex-direction: column;
+  font-size: 15px;
 `;
 const Input = styled.input`
-  width: 30px;
   text-align: center;
+  width: 30px;
   height: 12px;
   background-color: transparent;
-  color: rgb(200, 200, 200);
-  border: none;
-  border: 2px solid;
+  color: white;
   border-color: transparent;
   outline: none;
+  margin-left: 20px;
+  font-style: italic;
+  border-bottom: 2px solid;
+  overflow: auto;
   &:focus {
-    border: 2px solid;
-    border-color: black grey grey black;
+    border-radius: 3px;
     outline: none;
   }
 `;
@@ -108,7 +123,9 @@ const SelectInput = styled.select`
   border: none;
   appearance: none;
   background-color: transparent;
-  color: rgb(200, 200, 200);
+  color: white;
+  font-style: italic;
+  border-bottom: 2px solid;
   &:focus {
     outline: none;
   }
@@ -118,8 +135,7 @@ const StyledOption = styled.option`
 `;
 const InputContainer = styled.div`
   display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  margin-bottom: 3vh;
+  margin-bottom: 2vh;
+  justify-content: flex-start;
 `;
 export default SheetForm;

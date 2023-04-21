@@ -1,32 +1,56 @@
 import styled from "styled-components";
 import Measure from "./Measure";
 import SheetHeader from "./SheetHeader";
-
-const MusicSheet = ({ notification, track }) => {
+import { String, MesureNum } from "./Measure";
+import { convertMeasureToDisplayFormat } from "../converters_and_helpers/helpers";
+const MusicSheet = ({ notification, track, formData }) => {
   return (
     <Wrapper>
-      <SheetHeader />
+      <SheetHeader formData={formData} />
       {notification && (
-        <Notification>bring your mic close to the guitar</Notification>
+        <Notification>bring your mic close your the guitar</Notification>
       )}
       <TabsWrapper>
-        {track &&
+        {track.length !== 0 ? (
           track.map((measure, index) => {
-            return <Measure key={index} measure={measure} />;
-          })}
+            return (
+              <Measure
+                key={index}
+                measure={convertMeasureToDisplayFormat(measure)[0]}
+                shift={convertMeasureToDisplayFormat(measure)[1]}
+                index={index}
+              />
+            );
+          })
+        ) : (
+          <div>
+            <MesureNum>0</MesureNum>
+            <String />
+            <String />
+            <String />
+            <String />
+            <String />
+            <String />
+          </div>
+        )}
       </TabsWrapper>
     </Wrapper>
   );
 };
+
 const Wrapper = styled.div`
-  width: 50%;
+  width: 60%;
   margin: 100px 0 100px 0;
+  border: 1px solid black;
+  position: relative;
+  color: black;
+  background-color: whitesmoke;
 `;
+
 const TabsWrapper = styled.div`
   margin: 10% 0 0 10%;
   display: flex;
-  justify-content: center;
-  background-color: rgba(240, 240, 240);
+  flex-wrap: wrap;
 `;
 
 const Notification = styled.p`
@@ -36,7 +60,11 @@ const Notification = styled.p`
   background-color: rgba(0, 0, 0, 0.1);
   margin: 10px auto;
   font-weight: 600;
-  border-radius: 10%;
+  border-radius: 30px;
   color: rgba(0, 0, 0, 0.7);
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
 `;
+
 export default MusicSheet;

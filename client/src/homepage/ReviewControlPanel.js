@@ -1,7 +1,7 @@
 import React from "react";
 
 const ReviewControlPanel = () => {
-  return <div>ReviewControlPanel</div>;
+  return <div></div>;
 };
 
 export default ReviewControlPanel;

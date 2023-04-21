@@ -10,9 +10,6 @@ let myInterval;
 const HomePage = () => {
   const [source, setSource] = useState(null);
   const [started, setStart] = useState(false);
-  const [pitchNote, setPitchNote] = useState("rest");
-  const [pitchScale, setPitchScale] = useState(0);
-  const [pitch, setPitch] = useState("0 Hz");
   const [notification, setNotification] = useState(false);
   const [track, setTrack] = useState([]);
   const [formData, setFormData] = useState({
@@ -69,14 +66,12 @@ const HomePage = () => {
   };
   return (
     <Wrapper>
-      <LeftTab
-        pitchNote={pitchNote}
-        pitchScale={pitchScale}
-        pitch={pitch}
+      <LeftTab formData={formData} setFormData={setFormData} />
+      <MusicSheet
+        notification={notification}
+        track={track}
         formData={formData}
-        setFormData={setFormData}
       />
-      <MusicSheet notification={notification} track={track} />
       <RightTab start={start} stop={stop} started={started} />
     </Wrapper>
   );
@@ -86,7 +81,8 @@ const Wrapper = styled.div`
   justify-content: space-around;
   margin: 1vh 1vw 0 1vw;
   position: relative;
-  height: 93vh;
+  z-index: -1;
+  font-family: "Lato", sans-serif;
 `;
 
 export default HomePage;

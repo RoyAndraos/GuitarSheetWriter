@@ -1,10 +1,11 @@
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import Header from "./Header";
 import HomePage from "./HomePage";
 
 const App = () => {
   return (
     <Wrapper>
+      <GlobalStyle />
       <Header />
       <HomePage />
     </Wrapper>
@@ -12,8 +13,13 @@ const App = () => {
 };
 const Wrapper = styled.div`
   position: relative;
-  overflow: hidden;
   z-index: 1;
+`;
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    background-color:black
+  }
 `;
 
 export default App;

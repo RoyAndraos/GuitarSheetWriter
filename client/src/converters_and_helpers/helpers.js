@@ -53,7 +53,6 @@ let encodedNoteArray = [];
 const updatePitch = (audioCtx, analyserNode, setTrack, bpm, timeSignature) => {
   const measureArrayLength = calculateMeasureTime(timeSignature, bpm);
   if (encodedNoteArray.length === measureArrayLength) {
-    console.log("hello");
     const measure = decodeNoteArray(encodedNoteArray, bpm, timeSignature);
     setTrack((curr) => [...curr, measure]);
     encodedNoteArray = [];
@@ -174,24 +173,24 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
   //Make an array of the possible durations
   //----------------------------------------------------------------------------------------------
   const noteDurations = [
-    { name: "1", duration: numArrayValuesPerFullNote },
-    { name: "d2", duration: numArrayValuesPerDottedHalfNote },
+    { name: "4", duration: numArrayValuesPerFullNote },
+    { name: "3", duration: numArrayValuesPerDottedHalfNote },
     { name: "2", duration: numArrayValuesPerHalfNote },
 
     //{ name: "2t", duration: numArrayValuesPerTripletHalfNote },
-    { name: "d4", duration: numArrayValuesPerDottedQuarterNote },
-    { name: "4", duration: numArrayValuesPerQuarterNote },
+    { name: "1.5", duration: numArrayValuesPerDottedQuarterNote },
+    { name: "1", duration: numArrayValuesPerQuarterNote },
 
     //{ name: "4t", duration: numArrayValuesPerTripletQuarterNote },
-    { name: "d8", duration: numArrayValuesPerDottedEighthNote },
-    { name: "8", duration: numArrayValuesPerEighthNote },
+    { name: "0.75", duration: numArrayValuesPerDottedEighthNote },
+    { name: "0.5", duration: numArrayValuesPerEighthNote },
 
     //{ name: "8t", duration: numArrayValuesPerTripletEighthNote },
     {
-      name: "d16",
+      name: "0.325",
       duration: numArrayValuesPerDottedSixtheenthNote,
     },
-    { name: "16", duration: numArrayValuesPer16thNote },
+    { name: "0.25", duration: numArrayValuesPer16thNote },
 
     //{
     //  name: "16t",
@@ -327,7 +326,10 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
   //----------------------------------------------------------------------------------------------
   const getClosestDuration = (duration) => {
     let closestDuration = noteDurations[0];
-    let closestDifference = Math.abs(duration - closestDuration.duration);
+    let previousDifference = 0;
+    let closestDifference = Math.abs(
+      duration - closestDuration.duration + previousDifference
+    );
 
     for (let i = 1; i < noteDurations.length; i++) {
       const difference = Math.abs(duration - noteDurations[i].duration);
@@ -335,6 +337,7 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
       if (difference < closestDifference) {
         closestDuration = noteDurations[i].name;
         closestDifference = difference;
+        previousDifference = difference;
       }
     }
     if (closestDuration === noteDurations[0]) {
@@ -367,12 +370,29 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
       const tabNote = getTabFromNote(element.note.symbol, element.note.scale);
       return { note: tabNote, duration: newDuration };
     } else {
-      return { ...element, duration: newDuration };
+      return { note: { string: "3", fret: "r" }, duration: newDuration };
     }
   });
-  console.log(measure);
   //----------------------------------------------------------------------------------------------
   return measure;
+};
+
+const convertMeasureToDisplayFormat = (measure) => {
+  let shift = 0;
+  const divShift = measure.map((element) => {
+    const newObj = { ...element, divShift: shift };
+    if (
+      parseFloat(element.duration) < 0.5 &&
+      parseFloat(element.duration) > 0.025
+    ) {
+      shift = shift + 0.5;
+    } else {
+      shift = shift + parseFloat(element.duration); //
+    }
+
+    return newObj;
+  });
+  return [divShift, shift];
 };
 
 export {
@@ -382,4 +402,5 @@ export {
   updatePitch,
   calculateMeasureTime,
   decodeNoteArray,
+  convertMeasureToDisplayFormat,
 };
