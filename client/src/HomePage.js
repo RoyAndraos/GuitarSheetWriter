@@ -81,7 +81,6 @@ const Wrapper = styled.div`
   justify-content: space-around;
   margin: 1vh 1vw 0 1vw;
   position: relative;
-  z-index: -1;
   font-family: "Lato", sans-serif;
 `;
 

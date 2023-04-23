@@ -12,7 +12,6 @@ const App = () => {
   );
 };
 const Wrapper = styled.div`
-  position: relative;
   z-index: 1;
 `;
 const GlobalStyle = createGlobalStyle`

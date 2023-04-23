@@ -3,12 +3,13 @@ import Measure from "./Measure";
 import SheetHeader from "./SheetHeader";
 import { String, MesureNum } from "./Measure";
 import { convertMeasureToDisplayFormat } from "../converters_and_helpers/helpers";
+import SheetFooter from "./SheetFooter";
 const MusicSheet = ({ notification, track, formData }) => {
   return (
     <Wrapper>
       <SheetHeader formData={formData} />
       {notification && (
-        <Notification>bring your mic close your the guitar</Notification>
+        <Notification>bring your mic close to your guitar</Notification>
       )}
       <TabsWrapper>
         {track.length !== 0 ? (
@@ -34,6 +35,7 @@ const MusicSheet = ({ notification, track, formData }) => {
           </div>
         )}
       </TabsWrapper>
+      <SheetFooter />
     </Wrapper>
   );
 };
@@ -48,7 +50,7 @@ const Wrapper = styled.div`
 `;
 
 const TabsWrapper = styled.div`
-  margin: 10% 0 0 10%;
+  margin: 50px 50px 0 50px;
   display: flex;
   flex-wrap: wrap;
 `;

@@ -1,14 +1,26 @@
 import styled from "styled-components";
 import { FaUserCircle } from "react-icons/fa";
 import { FaGuitar } from "react-icons/fa";
+import { useState, useContext } from "react";
+import SignForm from "./SignForm";
+import { UserContext } from "./UserContext";
 const Header = () => {
+  const [showingForm, setShowingForm] = useState(false);
+  const { currentUser } = useContext(UserContext);
+  const handleAccount = (e) => {
+    e.preventDefault();
+    setShowingForm(!showingForm);
+  };
   return (
     <Wrapper>
+      {showingForm && (
+        <SignForm setShowingForm={setShowingForm} showingForm={showingForm} />
+      )}
       <StyledButton>
         <StyledLogo />
       </StyledButton>
-      <Title>Piece Of Sheet</Title>
-      <StyledButton>
+      {currentUser && <Title>Hello {currentUser.username}!</Title>}
+      <StyledButton onClick={handleAccount}>
         <StyledAccount />
       </StyledButton>
     </Wrapper>
@@ -37,6 +49,7 @@ const StyledLogo = styled(FaGuitar)`
 `;
 
 const StyledButton = styled.button`
+  z-index: 100;
   background-color: transparent;
   border: none;
   transition: all 0.2s ease-in-out;
@@ -47,6 +60,8 @@ const StyledButton = styled.button`
 `;
 const Title = styled.h1`
   color: white;
-  font-style: italic;
+  &:hover {
+    cursor: default;
+  }
 `;
 export default Header;
