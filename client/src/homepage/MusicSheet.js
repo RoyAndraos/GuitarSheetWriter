@@ -4,7 +4,10 @@ import SheetHeader from "./SheetHeader";
 import { String, MesureNum } from "./Measure";
 import { convertMeasureToDisplayFormat } from "../converters_and_helpers/helpers";
 import SheetFooter from "./SheetFooter";
-const MusicSheet = ({ notification, track, formData }) => {
+import { TrackContext } from "../Contexts/TrackContext";
+import { useContext } from "react";
+const MusicSheet = ({ notification, formData }) => {
+  const { track } = useContext(TrackContext);
   return (
     <Wrapper>
       <SheetHeader formData={formData} />
@@ -12,8 +15,8 @@ const MusicSheet = ({ notification, track, formData }) => {
         <Notification>bring your mic close to your guitar</Notification>
       )}
       <TabsWrapper>
-        {track.length !== 0 ? (
-          track.map((measure, index) => {
+        {track.measures.length !== 0 ? (
+          track.measures.map((measure, index) => {
             return (
               <Measure
                 key={index}

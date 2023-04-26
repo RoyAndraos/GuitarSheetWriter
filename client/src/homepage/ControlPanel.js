@@ -1,58 +1,81 @@
 import styled, { keyframes } from "styled-components";
 import { FaCircle } from "react-icons/fa";
-import { FaSquare } from "react-icons/fa";
+import { BsFillPauseFill } from "react-icons/bs";
+import { RecordingContext } from "../Contexts/RecordingContext";
+import { useContext } from "react";
+import { TrackContext } from "../Contexts/TrackContext";
+const ControlPanel = ({ start, stop }) => {
+  const { currentlyRecording } = useContext(RecordingContext);
+  const { track } = useContext(TrackContext);
 
-const ControlPanel = ({ start, stop, started }) => {
   return (
     <Wrapper>
-      <StyledButton onClick={start} disabled={started}>
+      <StyledButton onClick={start} disabled={currentlyRecording}>
         <StyledCircle />
       </StyledButton>
-      <StyledButton onClick={stop} disabled={!started}>
-        <StyledSquare />
-      </StyledButton>
-      {started && <CurrentlyRecording />}
+      <SecondStyledButton
+        onClick={stop}
+        disabled={!currentlyRecording || track.measures.length === 0}
+      >
+        <StyledPause />
+      </SecondStyledButton>
+      {currentlyRecording && <CurrentlyRecording />}
     </Wrapper>
   );
 };
 const Wrapper = styled.div`
+  padding-top: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  border-top: 2px solid white;
 `;
 const StyledButton = styled.button`
-  font-size: 30px;
+  font-size: 25px;
   appearance: none;
   background-color: transparent;
   border: none;
   border: none;
+  transition: all 0.2s ease-in-out;
   &:hover {
     cursor: pointer;
-  }
-`;
-const StyledSquare = styled(FaSquare)`
-  border: none;
-  transition: all 0.2s ease-in-out;
-  color: white;
-  &:hover {
-    transform: scale(1.1);
+    opacity: 0.6;
   }
   &:active {
     transform: scale(0.95);
   }
+`;
+
+const SecondStyledButton = styled.button`
+  font-size: 25px;
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  border: none;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+  &:active {
+    transform: scale(0.95);
+  }
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+`;
+const StyledPause = styled(BsFillPauseFill)`
+  border: none;
+  transition: all 0.2s ease-in-out;
+  font-size: 35px;
+  color: white;
 `;
 const StyledCircle = styled(FaCircle)`
   color: red;
   outline: none;
   border: none;
-  transition: all 0.2s ease-in-out;
-  &:hover {
-    transform: scale(1.1);
-  }
-  &:active {
-    transform: scale(0.95);
-  }
 `;
 const blinkAnimation = keyframes`
   0% {
@@ -67,7 +90,6 @@ const blinkAnimation = keyframes`
   100% {
     box-shadow: 0 0 20px 10px rgba(255, 0, 0, 0.5);
     opacity:1;
-
   }
 `;
 

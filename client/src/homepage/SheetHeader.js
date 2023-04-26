@@ -5,9 +5,9 @@ const SheetHeader = ({ formData }) => {
     <Wrapper>
       <InfoWrapper>
         <BpmWrapper>
-          <FaMusic /> = {formData.bpm}
+          <FaMusic />: {formData.tempo}
         </BpmWrapper>
-        <p>TS = {formData.timeSignature}</p>
+        <p>TS: {formData.timeSignature}</p>
       </InfoWrapper>
       {formData.title ? (
         <Title>{formData.title}</Title>
@@ -30,7 +30,9 @@ const Wrapper = styled.div`
   }
 `;
 const InfoWrapper = styled.div`
-  font-size: 15px;
+  font-size: 10px;
+  font-weight: 700;
+  opacity: 0.6;
   display: flex;
   flex-direction: row;
   align-items: center;

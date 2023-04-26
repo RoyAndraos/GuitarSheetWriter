@@ -2,15 +2,23 @@ import styled from "styled-components";
 import { FaUserCircle } from "react-icons/fa";
 import { FaGuitar } from "react-icons/fa";
 import { useState, useContext } from "react";
-import SignForm from "./SignForm";
-import { UserContext } from "./UserContext";
+import SignForm from "./SignIn/SignForm";
+import { UserContext } from "./Contexts/UserContext";
+import { useNavigate } from "react-router-dom";
+import { RecordingContext } from "./Contexts/RecordingContext";
 const Header = () => {
   const [showingForm, setShowingForm] = useState(false);
+  const { currentlyRecording } = useContext(RecordingContext);
   const { currentUser } = useContext(UserContext);
   const handleAccount = (e) => {
     e.preventDefault();
-    setShowingForm(!showingForm);
+    if (!currentUser) {
+      setShowingForm(!showingForm);
+    } else {
+      navigate(`/profile/${currentUser.username}`);
+    }
   };
+  const navigate = useNavigate();
   return (
     <Wrapper>
       {showingForm && (
@@ -20,7 +28,7 @@ const Header = () => {
         <StyledLogo />
       </StyledButton>
       {currentUser && <Title>Hello {currentUser.username}!</Title>}
-      <StyledButton onClick={handleAccount}>
+      <StyledButton onClick={handleAccount} disabled={currentlyRecording}>
         <StyledAccount />
       </StyledButton>
     </Wrapper>

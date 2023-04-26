@@ -54,7 +54,10 @@ const updatePitch = (audioCtx, analyserNode, setTrack, bpm, timeSignature) => {
   const measureArrayLength = calculateMeasureTime(timeSignature, bpm);
   if (encodedNoteArray.length === measureArrayLength) {
     const measure = decodeNoteArray(encodedNoteArray, bpm, timeSignature);
-    setTrack((curr) => [...curr, measure]);
+    setTrack((curr) => {
+      const newTrack = [...curr.measures, measure];
+      return { ...curr, measures: newTrack };
+    });
     encodedNoteArray = [];
   }
 
@@ -91,6 +94,11 @@ const updatePitch = (audioCtx, analyserNode, setTrack, bpm, timeSignature) => {
     return noteInfo;
   }
 };
+const resetEncodedNoteArray = () => {
+  if (encodedNoteArray !== []) {
+    encodedNoteArray = [];
+  }
+};
 
 const calculateMeasureTime = (timeSignature, bpm) => {
   const timeSignatureArray = [
@@ -98,7 +106,7 @@ const calculateMeasureTime = (timeSignature, bpm) => {
     timeSignature.slice("/")[2],
   ];
   const measureTime =
-    (60 / ((parseInt(bpm) * timeSignatureArray[0]) / timeSignatureArray[1])) *
+    (60 / ((parseInt(bpm) * timeSignatureArray[1]) / timeSignatureArray[0])) *
     timeSignatureArray[1];
   const measureArrayLength = measureTime / (20 / 1000);
   return Math.round(measureArrayLength);
@@ -403,4 +411,5 @@ export {
   calculateMeasureTime,
   decodeNoteArray,
   convertMeasureToDisplayFormat,
+  resetEncodedNoteArray,
 };

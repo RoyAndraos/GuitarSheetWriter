@@ -40,7 +40,6 @@ const validPassword = (password) => {
 
 const addUser = async (req, res) => {
   const { username, fName, lName, email, password, repeat } = req.body;
-  const _id = uuid();
   const user = {
     username: username,
     fName: fName,
@@ -48,7 +47,7 @@ const addUser = async (req, res) => {
     email: email,
     password: password,
     repeat: repeat,
-    _id: _id,
+    track_ids: [],
   };
   try {
     const client = new MongoClient(MONGO_URI, options);
@@ -68,7 +67,7 @@ const addUser = async (req, res) => {
       password === repeat
     ) {
       const returnedInfo = {
-        _id: user._id,
+        track_ids: user.track_ids,
         username: user.username,
         email: user.email,
       };
@@ -90,7 +89,7 @@ const addUser = async (req, res) => {
       res
         .status(404)
         .json({ status: 404, data: email, message: "invalid email" });
-    } else if (validPassword(password)) {
+    } else if (!validPassword(password)) {
       res.status(404).json({
         status: 404,
         data: email,
@@ -146,7 +145,7 @@ const login = async (req, res) => {
       res.status(404).json({ status: 404, message: "incorrect password" });
     } else if (password === userInfo.password) {
       const returnedInfo = {
-        _id: userInfo._id,
+        track_ids: userInfo.track_ids,
         username: userInfo.username,
         email: userInfo.email,
       };
@@ -160,4 +159,33 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { addUser, addSecurity, login };
+const addTrack = async (req, res) => {
+  const track_id = uuid();
+  const { track } = req.body;
+  track._id = track_id;
+  const { currentUser } = req.body;
+  if (track.title === "") {
+    track.title = "untitled";
+  }
+  try {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("GuitarSheetWriter");
+    await db.collection("tracks").insertOne(track);
+    const userInfo = await db
+      .collection("users")
+      .findOne({ username: currentUser });
+    let newArray = userInfo.track_ids;
+    newArray.push(track_id);
+
+    await db
+      .collection("users")
+      .updateOne({ username: currentUser }, { $set: { track_ids: newArray } });
+    res.status(200).json({ status: 200, message: "track saved" });
+    client.close();
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
+module.exports = { addUser, addSecurity, login, addTrack };

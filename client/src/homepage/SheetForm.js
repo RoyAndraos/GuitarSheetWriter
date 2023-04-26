@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import styled from "styled-components";
-
+import { RecordingContext } from "../Contexts/RecordingContext";
 const SheetForm = ({ formData, setFormData }) => {
+  const { currentlyRecording } = useContext(RecordingContext);
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "topTimeSignature") {
@@ -45,24 +46,26 @@ const SheetForm = ({ formData, setFormData }) => {
           type={"text"}
           name={"title"}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          disabled={currentlyRecording}
         ></Input>
       </InputContainer>
 
       <InputContainer>
-        <label>Bpm :</label>
+        <label>Tempo :</label>
         <Input
           defaultValue={"60"}
           type={"text"}
-          name={"bpm"}
-          onChange={(e) => setFormData({ ...formData, bpm: e.target.value })}
+          name={"tempo"}
+          disabled={currentlyRecording}
+          onChange={(e) => setFormData({ ...formData, tempo: e.target.value })}
           onBlur={(e) => {
             const maxVal = "210";
             const minVal = "40";
             if (parseInt(e.target.value) < 40) {
-              setFormData({ ...formData, bpm: minVal });
+              setFormData({ ...formData, tempo: minVal });
               e.target.value = minVal;
             } else if (parseInt(e.target.value) > 210) {
-              setFormData({ ...formData, bpm: maxVal });
+              setFormData({ ...formData, tempo: maxVal });
               e.target.value = maxVal;
             }
           }}
@@ -78,12 +81,14 @@ const SheetForm = ({ formData, setFormData }) => {
             type={"text"}
             name={"topTimeSignature"}
             onChange={(e) => handleChange(e)}
+            disabled={currentlyRecording}
           ></Input>
           /
           <SelectInput
             name={"bottomTimeSignature"}
             defaultValue={"4"}
             onChange={(e) => handleChange(e)}
+            disabled={currentlyRecording}
           >
             <StyledOption value={"4"}>4</StyledOption>
             <StyledOption value={"8"}>8</StyledOption>
@@ -132,6 +137,7 @@ const SelectInput = styled.select`
 `;
 const StyledOption = styled.option`
   appearance: none;
+  color: black;
 `;
 const InputContainer = styled.div`
   display: flex;

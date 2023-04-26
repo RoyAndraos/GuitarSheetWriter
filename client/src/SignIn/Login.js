@@ -8,7 +8,7 @@ import {
   Input,
   Submit,
 } from "./SignUp";
-import { UserContext } from "./UserContext";
+import { UserContext } from "../Contexts/UserContext";
 import { FaArrowLeft } from "react-icons/fa";
 import styled from "styled-components";
 

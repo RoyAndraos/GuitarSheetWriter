@@ -2,7 +2,7 @@
 
 const express = require("express");
 const morgan = require("morgan");
-const { addUser, addSecurity, login } = require("./server");
+const { addUser, addSecurity, login, addTrack } = require("./server");
 const PORT = 4000;
 
 express()
@@ -22,6 +22,7 @@ express()
   .use(express.static("public"))
   .post("/login", login)
   .post("/signUp", addUser)
+  .post("/addTrack", addTrack)
   .patch("/addSecurity", addSecurity)
   .listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);

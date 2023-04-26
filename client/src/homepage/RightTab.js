@@ -1,12 +1,19 @@
 import React from "react";
 import ControlPanel from "./ControlPanel";
-import ReviewControlPanel from "./ReviewControlPanel";
 import styled from "styled-components";
-const RightTab = ({ start, stop, started }) => {
+import Metronome from "./Metronome";
+import TrackControlPanel from "./TrackControlPanel";
+
+const RightTab = ({ start, stop, bpm, timeSignature, title }) => {
   return (
     <Wrapper>
-      <ControlPanel start={start} stop={stop} started={started} />
-      <ReviewControlPanel />
+      <Metronome bpm={bpm} timeSignature={timeSignature} />
+      <ControlPanel start={start} stop={stop} />
+      <TrackControlPanel
+        bpm={bpm}
+        timeSignature={timeSignature}
+        title={title}
+      />
     </Wrapper>
   );
 };

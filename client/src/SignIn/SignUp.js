@@ -1,7 +1,7 @@
 import React from "react";
 import { FaUserCircle, FaQuestionCircle, FaSortDown } from "react-icons/fa";
 import { useState, useContext } from "react";
-import { UserContext } from "./UserContext";
+import { UserContext } from "../Contexts/UserContext";
 import styled, { keyframes } from "styled-components";
 import { CloseButton } from "./SignForm";
 import { BackButton } from "./Login";
