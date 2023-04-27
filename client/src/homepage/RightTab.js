@@ -4,16 +4,12 @@ import styled from "styled-components";
 import Metronome from "./Metronome";
 import TrackControlPanel from "./TrackControlPanel";
 
-const RightTab = ({ start, stop, bpm, timeSignature, title }) => {
+const RightTab = ({ start, stop }) => {
   return (
     <Wrapper>
-      <Metronome bpm={bpm} timeSignature={timeSignature} />
+      <Metronome/>
       <ControlPanel start={start} stop={stop} />
-      <TrackControlPanel
-        bpm={bpm}
-        timeSignature={timeSignature}
-        title={title}
-      />
+      <TrackControlPanel/>
     </Wrapper>
   );
 };

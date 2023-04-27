@@ -181,10 +181,10 @@ const addTrack = async (req, res) => {
     await db
       .collection("users")
       .updateOne({ username: currentUser }, { $set: { track_ids: newArray } });
-    res.status(200).json({ status: 200, message: "track saved" });
+    res.status(200).json({ status: 200, data:track_id ,message: "track saved" });
     client.close();
   } catch (err) {
-    res.status(500).json({ status: 500, message: err.message });
+    res.status(500).json({ status: 500,  message: err.message });
   }
 };
 

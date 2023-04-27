@@ -1,7 +1,9 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import { RecordingContext } from "../Contexts/RecordingContext";
-const SheetForm = ({ formData, setFormData }) => {
+import { TrackContext } from "../Contexts/TrackContext";
+const SheetForm = () => {
+  const { track, setTrack } = useContext(TrackContext)
   const { currentlyRecording } = useContext(RecordingContext);
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -9,31 +11,31 @@ const SheetForm = ({ formData, setFormData }) => {
       const maxVal = "32";
       const minVal = "1";
       if (parseInt(value) > 16) {
-        setFormData({
-          ...formData,
+        setTrack({
+          ...track,
           [name]: maxVal,
-          timeSignature: `${maxVal}/${formData.bottomTimeSignature}`,
+          timeSignature: `${maxVal}/${track.bottomTimeSignature}`,
         });
         e.target.value = maxVal;
       } else if (parseInt(value) <= 0) {
-        setFormData({
-          ...formData,
+        setTrack({
+          ...track,
           [name]: minVal,
-          timeSignature: `${minVal}/${formData.bottomTimeSignature}`,
+          timeSignature: `${minVal}/${track.bottomTimeSignature}`,
         });
         e.target.value = minVal;
       } else {
-        setFormData({
-          ...formData,
+        setTrack({
+          ...track,
           [name]: value,
-          timeSignature: `${value}/${formData.bottomTimeSignature}`,
+          timeSignature: `${value}/${track.bottomTimeSignature}`,
         });
       }
     } else if (name === "bottomTimeSignature") {
-      setFormData({
-        ...formData,
+      setTrack({
+        ...track,
         [name]: value,
-        timeSignature: `${formData.topTimeSignature}/${value}`,
+        timeSignature: `${track.topTimeSignature}/${value}`,
       });
     }
   };
@@ -45,7 +47,7 @@ const SheetForm = ({ formData, setFormData }) => {
           style={{ width: "100px" }}
           type={"text"}
           name={"title"}
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          onChange={(e) => setTrack({ ...track, title: e.target.value })}
           disabled={currentlyRecording}
         ></Input>
       </InputContainer>
@@ -57,15 +59,15 @@ const SheetForm = ({ formData, setFormData }) => {
           type={"text"}
           name={"tempo"}
           disabled={currentlyRecording}
-          onChange={(e) => setFormData({ ...formData, tempo: e.target.value })}
+          onChange={(e) => setTrack({ ...track, tempo: e.target.value })}
           onBlur={(e) => {
             const maxVal = "210";
             const minVal = "40";
             if (parseInt(e.target.value) < 40) {
-              setFormData({ ...formData, tempo: minVal });
+              setTrack({ ...track, tempo: minVal });
               e.target.value = minVal;
             } else if (parseInt(e.target.value) > 210) {
-              setFormData({ ...formData, tempo: maxVal });
+              setTrack({ ...track, tempo: maxVal });
               e.target.value = maxVal;
             }
           }}

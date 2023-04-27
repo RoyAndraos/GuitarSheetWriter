@@ -1,16 +1,19 @@
 import styled from "styled-components";
 import { FaMusic } from "react-icons/fa";
-const SheetHeader = ({ formData }) => {
+import { TrackContext } from "../Contexts/TrackContext";
+import { useContext } from "react";
+const SheetHeader = () => {
+  const {track} = useContext(TrackContext)
   return (
     <Wrapper>
       <InfoWrapper>
         <BpmWrapper>
-          <FaMusic />: {formData.tempo}
+          <FaMusic />: {track.tempo}
         </BpmWrapper>
-        <p>TS: {formData.timeSignature}</p>
+        <p>TS: {track.timeSignature}</p>
       </InfoWrapper>
-      {formData.title ? (
-        <Title>{formData.title}</Title>
+      {track.title ? (
+        <Title>{track.title}</Title>
       ) : (
         <TitlePlaceHolder>Title</TitlePlaceHolder>
       )}

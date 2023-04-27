@@ -4,21 +4,12 @@ import { useContext } from "react";
 import { TrackContext } from "../Contexts/TrackContext";
 import { UserContext } from "../Contexts/UserContext";
 
-const TrackControlPanel = ({ bpm, timeSignature, title }) => {
+const TrackControlPanel = () => {
   const { currentlyRecording } = useContext(RecordingContext);
   const { setTrack, track } = useContext(TrackContext);
   const { currentUser } = useContext(UserContext);
   const handleSave = (e, track, currentUser) => {
-    setTrack((curr) => {
-      return {
-        ...curr,
-        title: title,
-        timeSignature: timeSignature,
-        tempo: bpm,
-      };
-    });
     if (currentUser) {
-      console.log(track, currentUser.username);
       e.preventDefault();
       fetch("/addTrack", {
         method: "POST",
@@ -30,9 +21,10 @@ const TrackControlPanel = ({ bpm, timeSignature, title }) => {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-      });
+      }).then(res=>res.json()).then(result=> setTrack({...track, 
+        _id:result.data}));
     } else {
-      window.alert("signIn or signUp first");
+      window.alert("sign in or up first");
     }
   };
   const handleReset = () => {

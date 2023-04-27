@@ -6,14 +6,16 @@ import firstClickSound from "../assets/firstClick.wav";
 import { FiVolume } from "react-icons/fi";
 import { IoVolumeHighOutline } from "react-icons/io5";
 import { RecordingContext } from "../Contexts/RecordingContext";
+import { TrackContext } from "../Contexts/TrackContext";
 let intervalId;
-const Metronome = ({ bpm, timeSignature }) => {
+const Metronome = () => {
+  const {track} = useContext(TrackContext)
   const [activeLight, setActiveLight] = useState(0);
   const [visualOnly, setVisualOnly] = useState(true);
   const [lightElements, setLightElements] = useState([]);
-  const measureTime = calculateMeasureTime(timeSignature, bpm) * 20;
-  const beatTime = measureTime / parseInt(timeSignature.split("/")[0]);
-  const numOfLights = parseInt(timeSignature.split("/")[0]);
+  const measureTime = calculateMeasureTime(track.timeSignature, track.tempo) * 20;
+  const beatTime = measureTime / parseInt(track.timeSignature.split("/")[0]);
+  const numOfLights = parseInt(track.timeSignature.split("/")[0]);
   const { currentlyRecording } = useContext(RecordingContext);
 
   useEffect(() => {

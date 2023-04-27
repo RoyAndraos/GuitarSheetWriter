@@ -7,7 +7,6 @@ import { TrackContext } from "../Contexts/TrackContext";
 const ControlPanel = ({ start, stop }) => {
   const { currentlyRecording } = useContext(RecordingContext);
   const { track } = useContext(TrackContext);
-
   return (
     <Wrapper>
       <StyledButton onClick={start} disabled={currentlyRecording}>

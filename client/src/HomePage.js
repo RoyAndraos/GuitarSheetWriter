@@ -15,16 +15,10 @@ let myInterval;
 const HomePage = () => {
   const [source, setSource] = useState(null);
   const [notification, setNotification] = useState(false);
-  const [formData, setFormData] = useState({
-    bpm: "60",
-    timeSignature: "4/4",
-    topTimeSignature: "4",
-    bottomTimeSignature: "4",
-  });
-  const { setTrack } = useContext(TrackContext);
+  const { track,setTrack } = useContext(TrackContext);
   const audioCtx = AudioContext.getAudioContext();
   const analyserNode = AudioContext.getAnalyser();
-  const { setCurrentlyRecording } = useContext(RecordingContext);
+  const { setCurrentlyRecording,currentlyRecording } = useContext(RecordingContext);
   useEffect(() => {
     if (source != null) {
       source.connect(analyserNode);
@@ -36,12 +30,12 @@ const HomePage = () => {
     if (audioCtx.state === "suspended") {
       await audioCtx.resume();
     }
-    setCurrentlyRecording(true);
+    setCurrentlyRecording(!currentlyRecording);
     setNotification(true);
     setTimeout(() => setNotification(false), 5000);
     let countdown =
-      calculateMeasureTime(formData.timeSignature, formData.tempo) * 20;
-    const beatTime = countdown / parseInt(formData.timeSignature.split("/")[0]);
+      calculateMeasureTime(track.timeSignature, track.tempo) * 20;
+    const beatTime = countdown / parseInt(track.timeSignature.split("/")[0]);
     const countdownInterval = setInterval(async () => {
       countdown = countdown - beatTime;
       if (countdown === 0) {
@@ -54,8 +48,8 @@ const HomePage = () => {
             audioCtx,
             analyserNode,
             setTrack,
-            formData.tempo,
-            formData.timeSignature
+            track.tempo,
+            track.timeSignature
           );
         }, 20);
       }
@@ -65,7 +59,7 @@ const HomePage = () => {
   const stop = () => {
     resetEncodedNoteArray();
     source.disconnect(analyserNode);
-    setCurrentlyRecording(false);
+    setCurrentlyRecording(!currentlyRecording);
     clearInterval(myInterval);
   };
 
@@ -81,14 +75,11 @@ const HomePage = () => {
   };
   return (
     <Wrapper>
-      <LeftTab formData={formData} setFormData={setFormData} />
-      <MusicSheet notification={notification} formData={formData} />
+      <LeftTab />
+      <MusicSheet notification={notification}  />
       <RightTab
         start={start}
         stop={stop}
-        bpm={formData.tempo}
-        timeSignature={formData.timeSignature}
-        title={formData.title}
       />
     </Wrapper>
   );
