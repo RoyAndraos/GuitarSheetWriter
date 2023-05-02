@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { CloseButton } from "./SignForm";
 import {
   Wrapper,
@@ -11,12 +11,14 @@ import {
 import { UserContext } from "../Contexts/UserContext";
 import { FaArrowLeft } from "react-icons/fa";
 import styled from "styled-components";
+import { FetchMessageContext } from "../Contexts/FetchMessageContext";
 
 const Login = ({ showingForm, setShowingForm, setLogin, login }) => {
   const [loginForm, setLoginForm] = useState({});
   const { setCurrentUser } = useContext(UserContext);
-  const [response, setResponse] = useState({});
+  const { setFetchMessage } = useContext(FetchMessageContext);
   const [error, setError] = useState("");
+
   const handleSubmit = (e, loginForm) => {
     e.preventDefault();
     fetch("/login", {
@@ -28,15 +30,15 @@ const Login = ({ showingForm, setShowingForm, setLogin, login }) => {
       },
     })
       .then((res) => res.json())
-      .then((result) => setResponse(result))
-      .then(() => {
-        switch (response.status) {
+      .then((result) => {
+        switch (result.status) {
           case 200:
-            console.log(response.data);
-            setCurrentUser(response.data);
+            setCurrentUser(result.data);
+            setShowingForm(!showingForm);
+            setFetchMessage(result.message);
             return;
           case 404:
-            return setError(response.message);
+            return setError(result.message);
         }
       });
   };
@@ -87,7 +89,7 @@ export const BackButton = styled.button`
   position: absolute;
   left: 15px;
   top: 15px;
-  font-size: 30px;
+  font-size: 40px;
   font-weight: 900;
   color: grey;
   background-color: transparent;
@@ -103,7 +105,8 @@ export const BackButton = styled.button`
 `;
 const StyledError = styled.p`
   position: absolute;
-  top: 450px;
+  font-size: 25px;
+  bottom: 15%;
   color: #d1560e;
 `;
 

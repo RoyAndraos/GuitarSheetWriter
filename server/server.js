@@ -40,7 +40,9 @@ const validPassword = (password) => {
 
 const addUser = async (req, res) => {
   const { username, fName, lName, email, password, repeat } = req.body;
+  const _id = uuid();
   const user = {
+    _id: _id,
     username: username,
     fName: fName,
     lName: lName,
@@ -48,6 +50,7 @@ const addUser = async (req, res) => {
     password: password,
     repeat: repeat,
     track_ids: [],
+    requests: [],
   };
   try {
     const client = new MongoClient(MONGO_URI, options);
@@ -69,7 +72,8 @@ const addUser = async (req, res) => {
       const returnedInfo = {
         track_ids: user.track_ids,
         username: user.username,
-        email: user.email,
+        requests: user.requests,
+        _id: _id,
       };
       await db.collection("users").insertOne(user);
       res
@@ -109,25 +113,6 @@ const addUser = async (req, res) => {
   }
 };
 
-const addSecurity = async (req, res) => {
-  const { security, formData } = req.body;
-  try {
-    const client = new MongoClient(MONGO_URI, options);
-    await client.connect();
-    const db = client.db("GuitarSheetWriter");
-    await db
-      .collection("users")
-      .updateOne(
-        { email: formData.email },
-        { $set: { question: security.question, answer: security.answer } }
-      );
-    res.status(200).json({ status: 200, message: "security added!" });
-    client.close();
-  } catch (err) {
-    res.status(500).json({ status: 500, message: err.message });
-  }
-};
-
 const login = async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -138,7 +123,6 @@ const login = async (req, res) => {
     const userInfo = await db
       .collection("users")
       .findOne({ username: username });
-
     if (!userInfo) {
       res.status(404).json({ status: 404, message: "invalid username" });
     } else if (password !== userInfo.password) {
@@ -147,7 +131,8 @@ const login = async (req, res) => {
       const returnedInfo = {
         track_ids: userInfo.track_ids,
         username: userInfo.username,
-        email: userInfo.email,
+        _id: userInfo._id,
+        requests: userInfo.requests,
       };
       res
         .status(200)
@@ -167,6 +152,7 @@ const addTrack = async (req, res) => {
   if (track.title === "") {
     track.title = "untitled";
   }
+  track.author = currentUser;
   try {
     const client = new MongoClient(MONGO_URI, options);
     await client.connect();
@@ -181,11 +167,175 @@ const addTrack = async (req, res) => {
     await db
       .collection("users")
       .updateOne({ username: currentUser }, { $set: { track_ids: newArray } });
-    res.status(200).json({ status: 200, data:track_id ,message: "track saved" });
+    res
+      .status(200)
+      .json({ status: 200, data: track_id, message: "track saved" });
     client.close();
   } catch (err) {
-    res.status(500).json({ status: 500,  message: err.message });
+    res.status(500).json({ status: 500, message: err.message });
   }
 };
 
-module.exports = { addUser, addSecurity, login, addTrack };
+const getProfile = async (req, res) => {
+  const username = req.params.username;
+  try {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("GuitarSheetWriter");
+    const profile = await db
+      .collection("users")
+      .findOne({ username: username });
+    const returnedInfo = {
+      track_ids: profile.track_ids,
+      username: profile.username,
+      _id: profile._id,
+      requests: profile.requests,
+    };
+    res
+      .status(200)
+      .json({ status: 200, data: returnedInfo, message: "success!" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
+const getTrackInfo = async (req, res) => {
+  const track_id = req.params.track_id;
+  try {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("GuitarSheetWriter");
+    const trackInfo = await db.collection("tracks").findOne({ _id: track_id });
+    res.status(200).json({ status: 200, data: trackInfo, message: "success!" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
+const findUsers = async (req, res) => {
+  const searchInput = req.params.username.toLowerCase();
+  try {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("GuitarSheetWriter");
+    const searchResult = await db.collection("users").find({}).toArray();
+    const matchedUsers = searchResult.filter((user) => {
+      return user.username.toLowerCase().includes(searchInput);
+    });
+    res
+      .status(200)
+      .json({ status: 200, data: matchedUsers, message: "success!" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
+const sendTrack = async (req, res) => {
+  const track_id = req.body.track_id;
+  const username = req.body.username;
+  try {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("GuitarSheetWriter");
+    const receiver = await db
+      .collection("users")
+      .findOne({ username: username });
+    if (
+      receiver.track_ids.includes(track_id) === true ||
+      receiver.requests.includes(track_id) === true
+    ) {
+      res
+        .status(404)
+        .json({ status: 404, message: "user already has the track" });
+    } else {
+      let newArray = receiver.requests;
+      newArray.push(track_id);
+      await db
+        .collection("users")
+        .updateOne({ username: username }, { $set: { requests: newArray } });
+      res
+        .status(200)
+        .json({ status: 200, data: receiver.requests, message: "track sent" });
+    }
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
+const saveTrack = async (req, res) => {
+  const track_id = req.body.track_id;
+  const username = req.body.username;
+  try {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("GuitarSheetWriter");
+    const user = await db.collection("users").findOne({ username: username });
+    let newRequestArray = user.requests;
+    newRequestArray = user.requests.filter((request) => request !== track_id);
+    let newTracksArray = user.track_ids;
+    newTracksArray.push(track_id);
+    await db
+      .collection("users")
+      .updateOne(
+        { username: username },
+        { $set: { requests: newRequestArray, track_ids: newTracksArray } }
+      );
+    res
+      .status(200)
+      .json({ status: 200, data: user.track_ids, message: "success!" });
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
+const deleteRequest = async (req, res) => {
+  const track_id = req.params.track_id;
+  const username = req.params.username;
+  try {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("GuitarSheetWriter");
+    await db
+      .collection("users")
+      .updateOne({ username: username }, { $pull: { requests: track_id } });
+    const user = await db.collection("users").findOne({ username: username });
+    res
+      .status(200)
+      .json({ status: 200, data: user.requests, message: "request deleted" });
+    client.close();
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+const deleteTrack = async (req, res) => {
+  const track_id = req.params.track_id;
+  const username = req.params.username;
+  try {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("GuitarSheetWriter");
+    await db
+      .collection("users")
+      .updateOne({ username: username }, { $pull: { track_ids: track_id } });
+    const user = await db.collection("users").findOne({ username: username });
+    res
+      .status(200)
+      .json({ status: 200, data: user.track_ids, message: "track deleted" });
+    client.close();
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
+module.exports = {
+  addUser,
+  login,
+  addTrack,
+  getProfile,
+  getTrackInfo,
+  findUsers,
+  sendTrack,
+  saveTrack,
+  deleteTrack,
+  deleteRequest,
+};

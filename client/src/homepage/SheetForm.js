@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { RecordingContext } from "../Contexts/RecordingContext";
 import { TrackContext } from "../Contexts/TrackContext";
 const SheetForm = () => {
-  const { track, setTrack } = useContext(TrackContext)
+  const { track, setTrack } = useContext(TrackContext);
   const { currentlyRecording } = useContext(RecordingContext);
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +58,7 @@ const SheetForm = () => {
           defaultValue={"60"}
           type={"text"}
           name={"tempo"}
-          disabled={currentlyRecording}
+          disabled={currentlyRecording || track.measures.length !== 0}
           onChange={(e) => setTrack({ ...track, tempo: e.target.value })}
           onBlur={(e) => {
             const maxVal = "210";
@@ -83,14 +83,14 @@ const SheetForm = () => {
             type={"text"}
             name={"topTimeSignature"}
             onChange={(e) => handleChange(e)}
-            disabled={currentlyRecording}
+            disabled={currentlyRecording || track.measures.length !== 0}
           ></Input>
           /
           <SelectInput
             name={"bottomTimeSignature"}
             defaultValue={"4"}
             onChange={(e) => handleChange(e)}
-            disabled={currentlyRecording}
+            disabled={currentlyRecording || track.measures.length !== 0}
           >
             <StyledOption value={"4"}>4</StyledOption>
             <StyledOption value={"8"}>8</StyledOption>
@@ -102,25 +102,26 @@ const SheetForm = () => {
   );
 };
 
-const StyledForm = styled.form`
+const StyledForm = styled.div`
   font-family: "Lato", sans-serif;
   padding-top: 20px;
   display: flex;
   flex-direction: column;
-  font-size: 15px;
+  font-size: 25px;
+  border-bottom: 2px solid white;
 `;
 const Input = styled.input`
   text-align: center;
-  width: 30px;
-  height: 12px;
+  width: 40px;
   background-color: transparent;
   color: white;
   border-color: transparent;
   outline: none;
   margin-left: 20px;
   font-style: italic;
+  font-size: 20px;
   border-bottom: 2px solid;
-  overflow: auto;
+
   &:focus {
     border-radius: 3px;
     outline: none;
@@ -132,6 +133,9 @@ const SelectInput = styled.select`
   background-color: transparent;
   color: white;
   font-style: italic;
+  font-size: 20px;
+  position: relative;
+  padding-bottom: 2.15px;
   border-bottom: 2px solid;
   &:focus {
     outline: none;
@@ -144,6 +148,6 @@ const StyledOption = styled.option`
 const InputContainer = styled.div`
   display: flex;
   margin-bottom: 2vh;
-  justify-content: flex-start;
+  align-items: center;
 `;
 export default SheetForm;

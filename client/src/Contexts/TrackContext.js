@@ -1,5 +1,4 @@
 import { createContext, useState } from "react";
-
 export const TrackContext = createContext(null);
 
 export const TrackProvider = ({ children }) => {
@@ -8,6 +7,8 @@ export const TrackProvider = ({ children }) => {
     title: "",
     tempo: "60",
     timeSignature: "4/4",
+    bottomTimeSignature: "4",
+    topTimeSignature: "4",
   });
 
   return (

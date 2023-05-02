@@ -48,7 +48,7 @@ export const CloseButton = styled.button`
   position: absolute;
   right: 15px;
   top: 10px;
-  font-size: 30px;
+  font-size: 40px;
   font-weight: 900;
   color: grey;
   background-color: transparent;
@@ -82,16 +82,17 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.7);
-  width: 500px;
-  height: 600px;
+  width: 700px;
+  height: 800px;
   animation: ${fadeIn} 0.6s ease-in-out;
 `;
 const StyledButton = styled.button`
   border: none;
-  width: 200px;
-  font-size: 20px;
+  width: 230px;
+  font-size: 28px;
   background-color: rgba(255, 255, 255, 0.8);
   color: grey;
+  height: 150px;
   text-decoration: underline;
   line-height: 100px;
   &:hover {

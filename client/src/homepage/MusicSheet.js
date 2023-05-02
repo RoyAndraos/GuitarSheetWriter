@@ -6,11 +6,11 @@ import { convertMeasureToDisplayFormat } from "../converters_and_helpers/helpers
 import SheetFooter from "./SheetFooter";
 import { TrackContext } from "../Contexts/TrackContext";
 import { useContext } from "react";
-const MusicSheet = ({ notification, formData }) => {
+const MusicSheet = ({ notification }) => {
   const { track } = useContext(TrackContext);
   return (
     <Wrapper>
-      <SheetHeader formData={formData} />
+      <SheetHeader />
       {notification && (
         <Notification>bring your mic close to your guitar</Notification>
       )}
@@ -43,18 +43,19 @@ const MusicSheet = ({ notification, formData }) => {
   );
 };
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   width: 60%;
-  margin: 100px 0 100px 0;
+  margin: 100px 0 200px 0;
   border: 1px solid black;
   position: relative;
   color: black;
   background-color: whitesmoke;
 `;
 
-const TabsWrapper = styled.div`
+export const TabsWrapper = styled.div`
   margin: 50px 50px 0 50px;
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
 `;
 

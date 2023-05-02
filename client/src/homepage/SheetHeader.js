@@ -3,7 +3,7 @@ import { FaMusic } from "react-icons/fa";
 import { TrackContext } from "../Contexts/TrackContext";
 import { useContext } from "react";
 const SheetHeader = () => {
-  const {track} = useContext(TrackContext)
+  const { track } = useContext(TrackContext);
   return (
     <Wrapper>
       <InfoWrapper>
@@ -28,12 +28,14 @@ const Wrapper = styled.div`
   border-bottom: rgba(0, 0, 0, 0.5) 2px solid;
   margin-right: 25px;
   margin-left: 25px;
+  margin-top: 20px;
+  padding-bottom: 20px;
   &:hover {
     cursor: default;
   }
 `;
 const InfoWrapper = styled.div`
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 700;
   opacity: 0.6;
   display: flex;
@@ -45,7 +47,7 @@ const InfoWrapper = styled.div`
 const Title = styled.p`
   position: absolute;
   left: 50%;
-  font-size: 25px;
+  font-size: 35px;
   transform: translateX(-50%);
 `;
 const BpmWrapper = styled.div`
@@ -55,7 +57,7 @@ const BpmWrapper = styled.div`
 const TitlePlaceHolder = styled.p`
   position: absolute;
   left: 50%;
-  font-size: 25px;
+  font-size: 35px;
   transform: translateX(-50%);
   opacity: 0.3;
 `;

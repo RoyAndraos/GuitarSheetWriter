@@ -1,11 +1,14 @@
-import React from "react";
 import SheetForm from "./SheetForm";
 import styled from "styled-components";
+import Message from "./Message";
+import Metronome from "./Metronome";
 
-const LeftTab = ({ formData, setFormData }) => {
+const LeftTab = () => {
   return (
     <Wrapper>
-      <SheetForm formData={formData} setFormData={setFormData} />
+      <Metronome />
+      <SheetForm />
+      <Message />
     </Wrapper>
   );
 };
@@ -18,6 +21,5 @@ const Wrapper = styled.div`
   margin: 100px 0 0 0;
   color: white;
   border-top: 2px solid white;
-  border-bottom: 2px solid white;
 `;
 export default LeftTab;

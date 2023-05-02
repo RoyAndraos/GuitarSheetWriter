@@ -74,7 +74,6 @@ const updatePitch = (audioCtx, analyserNode, setTrack, bpm, timeSignature) => {
       const scale = Math.floor(note / 12) - 1;
       const dtune = centsOffFromPitch(frequency, note);
       noteInfo = { note, symbol, scale, dtune, amp };
-
       encodedNoteArray.push(noteInfo);
       return noteInfo;
     }

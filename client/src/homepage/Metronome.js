@@ -9,15 +9,17 @@ import { RecordingContext } from "../Contexts/RecordingContext";
 import { TrackContext } from "../Contexts/TrackContext";
 let intervalId;
 const Metronome = () => {
-  const {track} = useContext(TrackContext)
+  const { track } = useContext(TrackContext);
   const [activeLight, setActiveLight] = useState(0);
   const [visualOnly, setVisualOnly] = useState(true);
   const [lightElements, setLightElements] = useState([]);
-  const measureTime = calculateMeasureTime(track.timeSignature, track.tempo) * 20;
+  const measureTime =
+    calculateMeasureTime(track.timeSignature, track.tempo) * 20;
   const beatTime = measureTime / parseInt(track.timeSignature.split("/")[0]);
   const numOfLights = parseInt(track.timeSignature.split("/")[0]);
-  const { currentlyRecording } = useContext(RecordingContext);
 
+  const { currentlyRecording } = useContext(RecordingContext);
+  const [countdown, setCountdown] = useState(0);
   useEffect(() => {
     if (currentlyRecording) {
       intervalId = setInterval(() => {
@@ -31,7 +33,7 @@ const Metronome = () => {
 
   useEffect(() => {
     const click = new Audio(clickSound);
-    const firstClick = new Audio(firstClickSound); // create a new Audio object
+    const firstClick = new Audio(firstClickSound);
     if (currentlyRecording && !visualOnly) {
       if (activeLight === 0) {
         // play the click sound when the activeLight changes to 0 (the first beat)
@@ -39,6 +41,23 @@ const Metronome = () => {
       } else {
         click.play();
       }
+    } else if (currentlyRecording && visualOnly) {
+      const click = new Audio(clickSound);
+      const firstClick = new Audio(firstClickSound);
+      if (countdown <= numOfLights) {
+        if (activeLight === 0) {
+          firstClick.play();
+          const newCountDown = countdown + 1;
+          setCountdown(newCountDown);
+        } else {
+          click.play();
+          const newCountDown = countdown + 1;
+          setCountdown(newCountDown);
+        }
+      }
+    }
+    if (!currentlyRecording && visualOnly) {
+      setCountdown(0);
     }
   }, [activeLight, currentlyRecording]);
   useEffect(() => {
@@ -73,13 +92,14 @@ const Wrapper = styled.div`
   margin-bottom: 20px;
   justify-content: center;
   border-bottom: 2px solid white;
-  padding-bottom: 10px;
+  padding-bottom: 50px;
+  padding-top: 50px;
   align-items: center;
 `;
 
 const Light = styled.div`
-  width: 10px;
-  height: 10px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background-color: ${(props) => (props.active ? "white" : "gray")};
   margin-right: 10px;
@@ -87,9 +107,14 @@ const Light = styled.div`
 
 const Mute = styled.button`
   background-color: transparent;
+  border-radius: 3px;
   border: none;
-  width: fit-content;
+  width: 50px;
+  height: 45px;
+  margin-left: 10px;
   transition: all 0.2s ease-in-out;
+  border-top: 3px solid rgba(200, 200, 200, 0.4);
+  border-left: 3px solid rgba(200, 200, 200, 0.4);
   &:hover {
     cursor: pointer;
     opacity: 0.6;
@@ -97,17 +122,21 @@ const Mute = styled.button`
 `;
 
 const StyledVolumeMuted = styled(FiVolume)`
-  font-size: 25px;
+  font-size: 40px;
   cursor: pointer;
   color: white;
 `;
 
 const StyledVolume = styled(IoVolumeHighOutline)`
-  font-size: 25px;
+  font-size: 40px;
   cursor: pointer;
   color: white;
 `;
 const MetronomeWrapper = styled.div`
   display: flex;
+  border-radius: 3px;
+  border-right: 3px solid rgba(200, 200, 200, 0.4);
+  border-bottom: 3px solid rgba(200, 200, 200, 0.4);
+  padding: 10px 20px 10px 20px;
 `;
 export default Metronome;
