@@ -49,6 +49,18 @@ const peakAmplitude = (buf) => {
   }
   return Math.round(peak * 1000);
 };
+const calculateMeasureTime = (timeSignature, bpm) => {
+  const timeSignatureArray = [
+    timeSignature.split("")[0],
+    timeSignature.split("")[2],
+  ];
+  const measureTime =
+    (60 / ((parseInt(bpm) * timeSignatureArray[1]) / timeSignatureArray[0])) *
+    timeSignatureArray[1];
+  const measureArrayLength = measureTime / (20 / 1000);
+  return Math.round(measureArrayLength);
+};
+
 let encodedNoteArray = [];
 const updatePitch = (audioCtx, analyserNode, setTrack, bpm, timeSignature) => {
   const measureArrayLength = calculateMeasureTime(timeSignature, bpm);
@@ -82,8 +94,7 @@ const updatePitch = (audioCtx, analyserNode, setTrack, bpm, timeSignature) => {
       encodedNoteArray.push(noteInfo);
       return noteInfo;
     }
-  }
-  if (noiseCanceledFrequency > -1) {
+  } else {
     const note = noteFromPitch(noiseCanceledFrequency);
     const symbol = noteStrings[note % 12];
     const scale = Math.floor(note / 12) - 1;
@@ -93,22 +104,11 @@ const updatePitch = (audioCtx, analyserNode, setTrack, bpm, timeSignature) => {
     return noteInfo;
   }
 };
+
 const resetEncodedNoteArray = () => {
   if (encodedNoteArray !== []) {
     encodedNoteArray = [];
   }
-};
-
-const calculateMeasureTime = (timeSignature, bpm) => {
-  const timeSignatureArray = [
-    timeSignature.slice("/")[0],
-    timeSignature.slice("/")[2],
-  ];
-  const measureTime =
-    (60 / ((parseInt(bpm) * timeSignatureArray[1]) / timeSignatureArray[0])) *
-    timeSignatureArray[1];
-  const measureArrayLength = measureTime / (20 / 1000);
-  return Math.round(measureArrayLength);
 };
 
 const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
@@ -385,18 +385,11 @@ const decodeNoteArray = (encodedNoteArray, bpm, timeSignature) => {
 };
 
 const convertMeasureToDisplayFormat = (measure) => {
-  let shift = 0;
+  const notePercentage = Math.round(98 / measure.length);
+  let shift = -notePercentage + 2;
   const divShift = measure.map((element) => {
-    const newObj = { ...element, divShift: shift };
-    if (
-      parseFloat(element.duration) < 0.5 &&
-      parseFloat(element.duration) > 0.025
-    ) {
-      shift = shift + 0.5;
-    } else {
-      shift = shift + parseFloat(element.duration); //
-    }
-
+    const newObj = { ...element, divShift: notePercentage + shift };
+    shift = shift + notePercentage;
     return newObj;
   });
   return [divShift, shift];

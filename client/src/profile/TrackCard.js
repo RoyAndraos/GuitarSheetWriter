@@ -93,7 +93,7 @@ const TrackCard = ({ track_id, setProfile, profile }) => {
           placement="left"
         >
           <TrackInfoContainer>
-            <span>{trackInfo.title}</span>
+            <SongTitle>{trackInfo.title}</SongTitle>
             <Date>{trackInfo.creationDate}</Date>
           </TrackInfoContainer>
         </StyledTippy>
@@ -158,6 +158,7 @@ export const Date = styled.span`
   font-size: 12px;
   font-weight: 600;
   opacity: 0.6;
+  color: white;
 `;
 
 export const StyledTippy = styled(Tippy)`
@@ -184,5 +185,9 @@ export const StyledTrash = styled(FaTrash)`
   &:active {
     transform: scale(0.97);
   }
+`;
+
+const SongTitle = styled.span`
+  color: white;
 `;
 export default TrackCard;

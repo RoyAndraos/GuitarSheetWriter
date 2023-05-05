@@ -47,6 +47,7 @@ const Measure = ({ measure, shift, index }) => {
                 key={element.divShift}
                 totalShift={shift}
                 shift={element.divShift}
+                placeholder={element.note.fret}
               >
                 {element.note.fret}
               </Note>
@@ -61,6 +62,7 @@ const Measure = ({ measure, shift, index }) => {
                 key={element.divShift}
                 totalShift={shift}
                 shift={element.divShift}
+                placeholder={element.note.fret}
               >
                 {element.note.fret}
               </Note>
@@ -75,6 +77,7 @@ const Measure = ({ measure, shift, index }) => {
                 key={element.divShift}
                 totalShift={shift}
                 shift={element.divShift}
+                placeholder={element.note.fret}
               >
                 {element.note.fret}
               </Note>
@@ -89,6 +92,7 @@ const Measure = ({ measure, shift, index }) => {
                 key={element.divShift}
                 totalShift={shift}
                 shift={element.divShift}
+                placeholder={element.note.fret}
               >
                 {element.note.fret}
               </Note>
@@ -103,6 +107,7 @@ const Measure = ({ measure, shift, index }) => {
                 key={element.divShift}
                 totalShift={shift}
                 shift={element.divShift}
+                placeholder={element.note.fret}
               >
                 {element.note.fret}
               </Note>
@@ -117,6 +122,7 @@ const Measure = ({ measure, shift, index }) => {
                 key={element.divShift}
                 totalShift={shift}
                 shift={element.divShift}
+                placeholder={element.note.fret}
               >
                 {element.note.fret}
               </Note>
@@ -128,8 +134,8 @@ const Measure = ({ measure, shift, index }) => {
 };
 
 const Note = styled.p`
-  position: relative;
-  left: ${(props) => (props.shift * 80) / props.totalShift}%;
+  position: absolute;
+  left: ${(props) => props.shift}%;
   top: -9px;
   margin: 0;
   margin-left: 10px;
@@ -150,6 +156,7 @@ export const String = styled.div`
   width: 15vw;
   height: 20px;
   border: 1px solid black;
+  position: relative;
   &:last-of-type {
     border-bottom: none;
     border-left: none;

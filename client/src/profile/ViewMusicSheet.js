@@ -38,4 +38,5 @@ const Wrapper = styled.div`
   left: 50%;
   transform: translateX(-50%);
 `;
+
 export default ViewMusicSheet;
