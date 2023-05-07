@@ -7,6 +7,8 @@ import EditMeasure from "./EditMeasure";
 import styled from "styled-components";
 import { convertMeasureToDisplayFormat } from "../converters_and_helpers/helpers";
 import { UserContext } from "../Contexts/UserContext";
+import { FetchMessageContext } from "../Contexts/FetchMessageContext";
+import Message from "../homepage/Message";
 
 const EditMusicSheet = () => {
   const { track, setTrack } = useContext(TrackContext);
@@ -14,6 +16,7 @@ const EditMusicSheet = () => {
   const [trackCopy, setTrackCopy] = useState(track);
   const [selectedNote, setSelectedNote] = useState(null);
   const [updatedNote, setUpdatedNote] = useState(null);
+  const { setFetchMessage } = useContext(FetchMessageContext);
   const handleBackgroundClick = (e) => {
     e.preventDefault();
     if (updatedNote) {
@@ -33,7 +36,7 @@ const EditMusicSheet = () => {
   };
 
   const handleSave = (e) => {
-    const date = new Date("2022-05-01T12:30:00.000Z");
+    const date = new Date();
     const options = {
       year: "numeric",
       month: "long",
@@ -56,7 +59,11 @@ const EditMusicSheet = () => {
       },
     })
       .then((res) => res.json())
-      .then((result) => setTrack(result.data));
+      .then((result) => {
+        setTrack(result.data);
+        setTrackCopy(result.data);
+        setFetchMessage(result.message);
+      });
   };
 
   return (
@@ -92,6 +99,9 @@ const EditMusicSheet = () => {
           Save Changes
         </Save>
       )}
+      <MessageContainer>
+        <Message />
+      </MessageContainer>
     </Wrapper>
   );
 };
@@ -126,5 +136,12 @@ const Save = styled.button`
   &:active {
     transform: scale(0.96);
   }
+`;
+
+const MessageContainer = styled.div`
+  position: absolute;
+  width: 300px;
+  left: -400px;
+  top: 0;
 `;
 export default EditMusicSheet;

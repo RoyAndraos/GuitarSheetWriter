@@ -10,6 +10,7 @@ import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { TrackContext } from "../Contexts/TrackContext";
 import { FetchMessageContext } from "../Contexts/FetchMessageContext";
+import Spinner from "./Spinner";
 const TrackCard = ({ track_id, setProfile, profile }) => {
   const { currentUser } = useContext(UserContext);
   const { setTrack } = useContext(TrackContext);
@@ -55,7 +56,7 @@ const TrackCard = ({ track_id, setProfile, profile }) => {
   };
 
   if (!trackInfo) {
-    return <p>...loading</p>;
+    return <Spinner />;
   } else {
     return (
       <Wrapper

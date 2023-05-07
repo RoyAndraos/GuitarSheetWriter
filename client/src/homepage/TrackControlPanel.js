@@ -12,7 +12,7 @@ const TrackControlPanel = () => {
   const handleSave = (e, track, currentUser) => {
     if (track.measures.length !== 0) {
       if (currentUser) {
-        const date = new Date("2022-05-01T12:30:00.000Z");
+        const date = new Date();
         const options = {
           year: "numeric",
           month: "long",

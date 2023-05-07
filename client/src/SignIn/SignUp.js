@@ -6,6 +6,7 @@ import styled, { keyframes } from "styled-components";
 import { CloseButton } from "./SignForm";
 import { BackButton } from "./Login";
 import { FaArrowLeft } from "react-icons/fa";
+import { FetchMessageContext } from "../Contexts/FetchMessageContext";
 const SignUp = ({ setShowingForm, showingForm, signUp, setSignUp }) => {
   const [formData, setFormData] = useState({});
   const { setCurrentUser } = useContext(UserContext);
@@ -13,6 +14,7 @@ const SignUp = ({ setShowingForm, showingForm, signUp, setSignUp }) => {
   const handleChange = (key, value) => {
     setFormData({ ...formData, [key]: value });
   };
+  const { setFetchMessage } = useContext(FetchMessageContext);
 
   const handleSubmit = (e, formData) => {
     e.preventDefault();
@@ -30,6 +32,7 @@ const SignUp = ({ setShowingForm, showingForm, signUp, setSignUp }) => {
           case 200:
             setCurrentUser(result.data);
             setShowingForm(!showingForm);
+            setFetchMessage(result.message);
             break;
           case 404:
             setError(result.message);
@@ -179,9 +182,10 @@ const StyledError = styled.p`
   margin-left: 20px;
   margin-right: 20px;
   position: absolute;
-  top: 480px;
+  top: 665px;
   color: #d1560e;
   z-index: 100;
+  font-size: 20px;
 `;
 
 export default SignUp;

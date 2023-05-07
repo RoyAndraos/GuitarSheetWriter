@@ -9,6 +9,7 @@ import { FetchMessageContext } from "../Contexts/FetchMessageContext";
 import { FiLogOut } from "react-icons/fi";
 import { FiBox } from "react-icons/fi";
 import Message from "../homepage/Message";
+import Spinner from "./Spinner";
 
 const Profile = () => {
   const params = useParams();
@@ -43,7 +44,9 @@ const Profile = () => {
   };
 
   if (!profile) {
-    <Wrapper>...loading</Wrapper>;
+    <Wrapper>
+      <Spinner />
+    </Wrapper>;
   } else {
     return (
       <Wrapper>
@@ -215,7 +218,7 @@ const Title = styled.h1`
 const MessageContainer = styled.div`
   position: absolute;
   width: 300px;
-  top: -283px;
+  top: -48px;
 `;
 
 export default Profile;

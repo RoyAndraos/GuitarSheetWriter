@@ -5,6 +5,7 @@ import { calculateMeasureTime } from "../converters_and_helpers/helpers";
 import styled from "styled-components";
 import { FetchMessageContext } from "../Contexts/FetchMessageContext";
 import { StyledTrash, ManageTrack } from "./TrackCard";
+import Spinner from "./Spinner";
 
 const Request = ({ track_id, setProfile, profile }) => {
   const [trackInfo, setTrackInfo] = useState();
@@ -20,6 +21,7 @@ const Request = ({ track_id, setProfile, profile }) => {
   const handleSave = (e, username) => {
     e.preventDefault();
     const sendForm = { username: username, track_id: track_id };
+    console.log(sendForm);
     fetch("/saveTrack", {
       method: "POST",
       body: JSON.stringify(sendForm),
@@ -60,7 +62,7 @@ const Request = ({ track_id, setProfile, profile }) => {
       });
   };
   if (!trackInfo) {
-    return <p style={{ color: "black" }}>no requests at this time</p>;
+    return;
   }
   return (
     <Wrapper>
