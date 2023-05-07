@@ -17,7 +17,7 @@ const Request = ({ track_id, setProfile, profile }) => {
         setTrackInfo(result.data);
       });
   }, [track_id]);
-  const hadnleSave = (e, username) => {
+  const handleSave = (e, username) => {
     e.preventDefault();
     const sendForm = { username: username, track_id: track_id };
     fetch("/saveTrack", {
@@ -92,7 +92,7 @@ const Request = ({ track_id, setProfile, profile }) => {
         <StyledTrash onClick={(e) => deleteRequest(e, track_id)} />
         <SaveTrack
           onClick={(e) => {
-            hadnleSave(e, currentUser.username);
+            handleSave(e, currentUser.username);
           }}
         >
           Save

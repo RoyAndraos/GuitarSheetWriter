@@ -327,6 +327,37 @@ const deleteTrack = async (req, res) => {
   }
 };
 
+const updateTrack = async (req, res) => {
+  const track_id = uuid();
+  const { track } = req.body;
+  const oldId = track._id;
+  track._id = track_id;
+  const { currentUser } = req.body;
+  console.log(track_id, currentUser);
+  try {
+    const client = new MongoClient(MONGO_URI, options);
+    await client.connect();
+    const db = client.db("GuitarSheetWriter");
+    await db.collection("tracks").insertOne(track);
+    const userInfo = await db
+      .collection("users")
+      .findOne({ username: currentUser });
+    let newArray = userInfo.track_ids;
+    newArray = newArray.filter((id) => id !== oldId);
+    newArray.push(track_id);
+    await db
+      .collection("users")
+      .updateOne({ username: currentUser }, { $set: { track_ids: newArray } });
+
+    res
+      .status(200)
+      .json({ status: 200, data: track, message: "track updated" });
+    client.close();
+  } catch (err) {
+    res.status(500).json({ status: 500, message: err.message });
+  }
+};
+
 module.exports = {
   addUser,
   login,
@@ -338,4 +369,5 @@ module.exports = {
   saveTrack,
   deleteTrack,
   deleteRequest,
+  updateTrack,
 };

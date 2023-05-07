@@ -13,6 +13,7 @@ const {
   saveTrack,
   deleteTrack,
   deleteRequest,
+  updateTrack,
 } = require("./server");
 const PORT = 4000;
 
@@ -39,6 +40,7 @@ express()
   .post("/login", login)
   .post("/signUp", addUser)
   .post("/addTrack", addTrack)
+  .post("/updateTrack", updateTrack)
   .delete("/deleteTrack/:track_id/:username", deleteTrack)
   .delete("/deleteRequest/:track_id/:username", deleteRequest)
   .listen(PORT, () => {

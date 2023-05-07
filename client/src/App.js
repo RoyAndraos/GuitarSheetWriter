@@ -3,7 +3,7 @@ import Header from "./Header";
 import HomePage from "./HomePage";
 import { Routes, Route } from "react-router-dom";
 import Profile from "./profile/Profile";
-import ViewMusicSheet from "./profile/ViewMusicSheet";
+import EditMusicSheet from "./profile/EditMusicSheet";
 const App = () => {
   return (
     <Wrapper>
@@ -12,7 +12,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/profile/:username" element={<Profile />} />
-        <Route path="/:track_id" element={<ViewMusicSheet />} />
+        <Route path="/:track_id" element={<EditMusicSheet />} />
       </Routes>
     </Wrapper>
   );
